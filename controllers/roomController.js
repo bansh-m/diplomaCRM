@@ -1,26 +1,42 @@
 const Room = require('../models/Room');
+const Booking = require('../models/Booking');
 
 exports.createRoom = async (req, res) => {
-    const { name, address, hasActors, duration, minPlayers, maxPlayers, thumbnail } = req.body;
-
+    const { name, address, duration, minPlayers, maxPlayers, thumbnail, actors } = req.body;
     try {
-        const newRoom = new Room({
+        const room = new Room({
             name: name,
             address: address,
-            hasActors: hasActors === 'true',  // перевірка, чи строка 'true' є логічним true
+            hasActors: actors && actors.length > 0,
             duration: duration,
             playerLimits: {
                 min: minPlayers,
                 max: maxPlayers
             },
-            thumbnail: thumbnail || '/img/default_image.png'  // Використання замовчуваного зображення, якщо не вказано
+            actors: actors || [],
+            thumbnail: thumbnail
         });
-
-        await newRoom.save();  // Зберігання нової кімнати в базі даних
-        res.redirect('/');  // Перенаправлення користувача на головну сторінку або на сторінку списку кімнат
+        await room.save();
+        res.redirect('/');
     } catch (error) {
         console.error("Error creating room:", error);
         res.status(400).json({ message: "Failed to create new room", error });
+    }
+};
+
+exports.showRoom = async(req, res) => {
+    try {
+        const room = await Room.findById(req.params.id)
+                               .populate('actors');
+
+        if (!room) {
+            return res.status(404).send('Room not found');
+        }
+        const bookings = await Booking.find({ room: room._id }).populate('user', 'name');
+        res.render('room', { room, bookings});
+    } catch (error) {
+        console.error('Error fetching room details:', error);
+        res.status(500).send('Error fetching room details');
     }
 };
 

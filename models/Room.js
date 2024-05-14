@@ -34,7 +34,7 @@ const roomSchema = new mongoose.Schema({
     },
     thumbnail: {
         type: String,
-        default: '/img/default_image.png'
+        default: '/img/thumbnail.png'
     }
 });
 

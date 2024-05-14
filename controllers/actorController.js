@@ -1,12 +1,21 @@
 const Actor = require('../models/Actor');
 
 exports.createActor = async (req, res) => {
+    const { name, photo, age, contactNumber, address, rooms} = req.body;
     try {
-        const actor = new Actor(req.body);
+        const actor = new Actor({
+            name: name,
+            photo: photo,
+            age: age,
+            contactNumber: contactNumber,
+            address: address,
+            rooms: rooms || []
+        });
         await actor.save();
-        res.status(201).json(actor);
+        res.redirect('/')
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        console.error("Error creating actor:", error);
+        res.status(400).json({ message: "Failed to create new actor profile", error });
     }
 };
 

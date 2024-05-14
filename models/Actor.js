@@ -7,11 +7,11 @@ const actorSchema = new mongoose.Schema({
     },
     photo: {
         type: String,
-        required: true
+        default: '/img/icon.png'
     },
     age: {
         type: Number,
-        required: true
+        reqired: true
     },
     contactNumber: {
         type: String,
@@ -20,7 +20,11 @@ const actorSchema = new mongoose.Schema({
     address: {
         type: String,
         required: true
-    }
+    },
+    rooms: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Room'
+    }]
 });
 
 module.exports = mongoose.model('Actor', actorSchema);

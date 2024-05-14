@@ -21,7 +21,11 @@ const bookingSchema = new mongoose.Schema({
     clientContact: {
         type: String,
         required: true
-    }
+    },
+    actors: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Actor'
+    }]
 });
 
 module.exports = mongoose.model('Booking', bookingSchema);
