@@ -7,6 +7,7 @@ const roomRoutes = require('./routes/roomRoutes');
 const actorRoutes = require('./routes/actorRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const indexRoutes = require('./routes/indexRoutes');
+const apiRoutes = require('./routes/apiRoutes');
 
 const app = express();
 app.set('views', path.join(__dirname, 'views'));
@@ -21,6 +22,8 @@ app.use('/', indexRoutes);
 app.use('/rooms', roomRoutes);
 app.use('/actors', actorRoutes);
 app.use('/bookings', bookingRoutes);
+app.use('/api', apiRoutes);
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

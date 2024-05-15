@@ -1,42 +1,38 @@
 const Room = require('../models/Room');
 const Booking = require('../models/Booking');
-const Actor = require('../models/Actor');
+const Schedule = require('../models/Schedule');
 
 exports.createBooking = async (req, res) => {
-    const { roomId, startTime, endTime, clientName, clientContact } = req.body;
+    const { roomId, timeslotId, clientName, clientContact } = req.body;
 
     try {
-        const room = await Room.findById(roomId).populate('actors');
-        if (!room) {
-            return res.status(404).json({ message: "Room not found" });
-        }
-
-        // Перевірка на конфлікти часу бронювання
-        const overlappingBookings = await Booking.find({
-            room: roomId,
-            endTime: { $gt: startTime },
-            startTime: { $lt: endTime }
-        });
-
-        if (overlappingBookings.length > 0) {
-            return res.status(400).json({ message: "The room is already booked for the selected time" });
-        }
-
-        // Створення нового бронювання
         const newBooking = new Booking({
             room: roomId,
-            startTime,
-            endTime,
+            timeslot: {
+                start: timeslotId.start,
+                end: timeslotId.end
+            },
             clientName,
-            clientContact,
-            actors: room.actors.map(actor => actor._id)
+            clientContact
         });
         await newBooking.save();
 
-        res.status(201).json({ message: "Room booked successfully", booking: newBooking });
+        // Знайти і оновити розклад
+        const schedule = await Schedule.findOne({ 'room': roomId, 'timeslots._id': timeslotId });
+        if (schedule) {
+            const slot = schedule.timeslots.id(timeslotId);
+            if (!slot.booking) {
+                slot.booking = newBooking._id; // Додати посилання на бронювання
+                await schedule.save();
+            } else {
+                return res.status(400).send('Timeslot is already booked');
+            }
+        }
+
+        res.status(201).send('Booking created successfully');
     } catch (error) {
-        console.error('Error creating booking:', error);
-        res.status(500).json({ message: "Error booking room" });
+        console.error('Failed to create booking:', error);
+        res.status(500).send('Error creating booking');
     }
 };
 

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('layouts/header'); -%>
-
     <body>
         <div class="d-flex">
             <%- include('layouts/sidebar'); -%>
@@ -15,7 +14,7 @@
                             <%= room.address %>
                         </p>
                         <p class="room-text"><strong>Duration:</strong>
-                            <%= room.duration %> minutes
+                            <%= room.sessionDuration %> minutes
                         </p>
                         <p class="room-text"><strong>Player Limits:</strong>
                             <%= room.playerLimits.min %> - <%= room.playerLimits.max %> players
@@ -33,46 +32,10 @@
                     </div>
                 </div>
                 <div class="container mt-4">
-                    <!-- Форма для додавання бронювань -->
-                    <form action="/bookings/create" method="post">
-                        <input type="hidden" name="roomId" value="<%= room._id %>">
-                        <div class="form-group">
-                            <label for="start">Початок:</label>
-                            <input type="datetime-local" id="start" name="start" required class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="end">Кінець:</label>
-                            <input type="datetime-local" id="end" name="end" required class="form-control">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Add booking</button>
-                    </form>
-                    <!-- Відображення наявних бронювань -->
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Початок</th>
-                                <th>Кінець</th>
-                                <th>Користувач</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% bookings.forEach(booking=> { %>
-                                <tr>
-                                    <td>
-                                        <%= booking.startTime.toLocaleString() %>
-                                    </td>
-                                    <td>
-                                        <%= booking.endTime.toLocaleString() %>
-                                    </td>
-                                    <td>
-                                        <%= booking.user ? booking.user.name : 'Unknown user' %>
-                                    </td> <!-- Перевіряємо, чи є користувач -->
-                                </tr>
-                                <% }); %>
-                        </tbody>
-                    </table>
+                    <div id='calendar'></div>
                 </div>
             </main>
+            <script src="/js/calendar.js"></script>
             <%- include('layouts/scripts'); -%>
     </body>
 </html>

@@ -4,7 +4,7 @@ function validateForm() {
 
     if (minPlayers > maxPlayers) {
         alert('Minimum number of players cannot be greater than maximum.');
-        return false; // Запобігає відправленню форми
+        return false;
     }
-    return true; // Дозволяє відправити форму
+    return true;
 }
