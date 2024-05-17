@@ -15,11 +15,7 @@ const roomSchema = new mongoose.Schema({
     actors: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Actor'
-    }],
-    schedule: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Schedule'
-    }
+    }]
 });
 
 module.exports = mongoose.model('Room', roomSchema);

@@ -6,10 +6,6 @@ const bookingSchema = new mongoose.Schema({
         ref: 'Room',
         required: true
     },
-    timeslot: {
-        start: { type: Date, required: true },
-        end: { type: Date, required: true }
-    },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
     clientName: { type: String, required: true },

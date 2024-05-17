@@ -45,3 +45,28 @@ exports.getRoomBookings = async (req, res) => {
         res.status(500).json({ message: 'Error fetching bookings', error });
     }
 };
+
+exports.getSlotDetails = async (req, res) => {
+    try {
+        const { slotId } = req.params;
+
+        const schedule = await Schedule.findOne({ 'completeSchedule.slots._id': slotId });
+        if (!schedule) {
+            return res.status(404).json({ message: 'Slot not found' });
+        }
+
+        const slot = schedule.completeSchedule
+            .flatMap(day => day.slots)
+            .find(slot => slot._id.toString() === slotId);
+
+        if (!slot) {
+            return res.status(404).json({ message: 'Slot not found' });
+        }
+        
+        res.json(slot);
+
+    } catch (error) {
+        console.error('Error fetching slot details:', error);
+        res.status(500).json({ message: 'Error fetching slot details', error });
+    }
+};

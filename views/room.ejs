@@ -31,11 +31,13 @@
                         </ul>
                     </div>
                 </div>
-                <div class="container mt-4">
-                    <div id='calendar'></div>
+                <div class="container mt-4 py-5">
+                    <div id='calendar' data-schedule='<%- schedule %>'></div>
                 </div>
-            </main>
+            </main> 
+
             <script src="/js/calendar.js"></script>
+            <%- include('layouts/bookingModalForm'); -%>
             <%- include('layouts/scripts'); -%>
-    </body>
+        </body>
 </html>
