@@ -6,10 +6,16 @@ const bookingController = require('../controllers/bookingController');
 router.post('/create', roomController.createRoom);
 router.get('/:id', roomController.getRoom);
 
+// Новий маршрут для отримання деталей слота
+router.get('/slots/:slotId', bookingController.getSlotDetails);
 
-router.get('/slots/:slotId', bookingController.getSlotDetails); // Новий маршрут для отримання деталей слота
+// Додати нове бронювання
+router.post('/slots/:slotId/book', bookingController.createBooking);
 
-// router.put('/:id', roomController.updateRoom);
-// router.delete('/rooms/:id', roomController.deleteRoom);
+// Оновити існуюче бронювання
+router.put('/slots/:slotId/book', bookingController.updateBooking);
+
+// Видалити бронювання
+router.delete('/slots/:slotId/book', bookingController.deleteBooking);
 
 module.exports = router;

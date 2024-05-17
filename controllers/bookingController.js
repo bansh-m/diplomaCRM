@@ -2,56 +2,13 @@ const Room = require('../models/Room');
 const Booking = require('../models/Booking');
 const Schedule = require('../models/Schedule');
 
-exports.createBooking = async (req, res) => {
-    const { roomId, timeslotId, clientName, clientContact } = req.body;
-
-    try {
-        const newBooking = new Booking({
-            room: roomId,
-            timeslot: {
-                start: timeslotId.start,
-                end: timeslotId.end
-            },
-            clientName,
-            clientContact
-        });
-        await newBooking.save();
-
-        // Знайти і оновити розклад
-        const schedule = await Schedule.findOne({ 'room': roomId, 'timeslots._id': timeslotId });
-        if (schedule) {
-            const slot = schedule.timeslots.id(timeslotId);
-            if (!slot.booking) {
-                slot.booking = newBooking._id; // Додати посилання на бронювання
-                await schedule.save();
-            } else {
-                return res.status(400).send('Timeslot is already booked');
-            }
-        }
-
-        res.status(201).send('Booking created successfully');
-    } catch (error) {
-        console.error('Failed to create booking:', error);
-        res.status(500).send('Error creating booking');
-    }
-};
-
-exports.getRoomBookings = async (req, res) => {
-    try {
-        const { roomId } = req.params;
-        const bookings = await Booking.find({ room: roomId });
-        res.status(200).json(bookings);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching bookings', error });
-    }
-};
-
 exports.getSlotDetails = async (req, res) => {
     try {
         const { slotId } = req.params;
-
-        const schedule = await Schedule.findOne({ 'completeSchedule.slots._id': slotId });
+    
+        const schedule = await Schedule.findOne({ 'completeSchedule.slots._id': slotId }).populate('completeSchedule.slots.extendedProps.booking');
         if (!schedule) {
+            console.error(`No schedule found for slot ID: ${slotId}`);
             return res.status(404).json({ message: 'Slot not found' });
         }
 
@@ -60,13 +17,99 @@ exports.getSlotDetails = async (req, res) => {
             .find(slot => slot._id.toString() === slotId);
 
         if (!slot) {
+            console.error(`Slot not found within schedule for slot ID: ${slotId}`);
             return res.status(404).json({ message: 'Slot not found' });
         }
-        
+
         res.json(slot);
 
     } catch (error) {
         console.error('Error fetching slot details:', error);
         res.status(500).json({ message: 'Error fetching slot details', error });
+    }
+};
+
+exports.createBooking = async (req, res) => {
+    const { slotId } = req.params;
+    const { roomId, clientName, clientContact } = req.body;
+
+    try {
+        const schedule = await Schedule.findOne({ 'completeSchedule.slots._id': slotId });
+        const slot = schedule.completeSchedule.find(day => 
+            day.slots.some(slot => slot._id.equals(slotId))
+        ).slots.id(slotId);
+
+        if (slot.extendedProps.booking) {
+            return res.status(400).json({ message: 'Slot is already booked' });
+        }
+
+        const booking = new Booking({ room : roomId, clientName, clientContact, startTime: slot.start, endTime: slot.end });
+        await booking.save();
+
+        slot.extendedProps.booking = booking._id;
+        slot.title = 'Booked';
+        slot.extendedProps.status = 'booked';
+
+        await schedule.save();
+
+        res.status(201).json({ message: 'Booking created successfully', booking });
+    } catch (error) {
+        console.error('Error creating booking:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+exports.updateBooking = async (req, res) => {
+    const { slotId } = req.params;
+    const { clientName, clientContact } = req.body;
+
+    try {
+        const schedule = await Schedule.findOne({ 'completeSchedule.slots._id': slotId });
+        const slot = schedule.completeSchedule.find(day => 
+            day.slots.some(slot => slot._id.equals(slotId))
+        ).slots.id(slotId);
+
+        if (!slot.extendedProps.booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        const booking = await Booking.findById(slot.extendedProps.booking);
+        booking.clientName = clientName;
+        booking.clientContact = clientContact;
+
+        await booking.save();
+
+        res.status(200).json({ message: 'Booking updated successfully', booking });
+    } catch (error) {
+        console.error('Error updating booking:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+exports.deleteBooking = async (req, res) => {
+    const { slotId } = req.params;
+
+    try {
+        const schedule = await Schedule.findOne({ 'completeSchedule.slots._id': slotId });
+        const slot = schedule.completeSchedule.find(day => 
+            day.slots.some(slot => slot._id.equals(slotId))
+        ).slots.id(slotId);
+
+        if (!slot.extendedProps.booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        await Booking.findByIdAndDelete(slot.extendedProps.booking);
+
+        slot.extendedProps.booking = null;
+        slot.title = 'Available';
+        slot.extendedProps.status = 'free';
+
+        await schedule.save();
+
+        res.status(200).json({ message: 'Booking deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting booking:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };

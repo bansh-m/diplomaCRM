@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }))
         );
+        var roomId = schedule.room;
         var startTime = schedule.dayTemplate.startTime;
         var endTime = schedule.dayTemplate.endTime;
     } catch (e) {
@@ -71,25 +72,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         eventClick: function (arg) {
             var slotId = arg.event._def.extendedProps.slotId;
-            fetch(`/rooms/slots/${slotId}`)
-                .then(response => response.json())
+            fetchSlotDetails(slotId)
                 .then(data => {
-                    if (data.extendedProps.booking) {
-                        // Якщо бронювання існує, заповнюємо форму інформацією про бронювання
-                        document.getElementById('clientName').value = data.booking.clientName;
-                        document.getElementById('clientContact').value = data.booking.clientContact;
-                        document.getElementById('slotId').value = slotId;
-                        var modalTitle = `Booking Details for ${data.booking.clientName}`;
-                        document.getElementById('slotModalLabel').innerText = modalTitle;
-                    } else {
-                        document.getElementById('clientName').value = '';
-                        document.getElementById('clientContact').value = '';
-                        document.getElementById('slotId').value = slotId;
-                        var modalTitle = 'New Booking';
-                        document.getElementById('slotModalLabel').innerText = modalTitle;
-                    }
-                    var slotModal = new bootstrap.Modal(document.getElementById('slotModal'));
-                    slotModal.show();
+                    showBookingModal(data, roomId);
                 })
                 .catch(error => console.error('Error fetching slot details:', error));
         }
@@ -97,3 +82,82 @@ document.addEventListener('DOMContentLoaded', function () {
 
     calendar.render();
 });
+
+function fetchSlotDetails(slotId) {
+    return fetch(`/rooms/slots/${slotId}`)
+        .then(response => response.json());
+}
+
+function createBooking(slotId, roomId, clientName, clientContact) {
+    return fetch(`/rooms/slots/${slotId}/book`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ roomId, clientName, clientContact })
+    })
+        .then(response => response.json());
+}
+
+function updateBooking(slotId, clientName, clientContact) {
+    return fetch(`/rooms/slots/${slotId}/book`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ clientName, clientContact })
+    })
+        .then(response => response.json());
+}
+
+function deleteBooking(slotId) {
+    return fetch(`/rooms/slots/${slotId}/book`, {
+        method: 'DELETE'
+    })
+        .then(response => response.json());
+}
+
+function showBookingModal(slotData, roomId) {
+    var booking = slotData.extendedProps.booking;
+    document.getElementById('startTime').innerText = new Date(slotData.start).toLocaleString(undefined, { timeZone: 'UTC', timeZoneName: 'short' });
+    document.getElementById('endTime').innerText = new Date(slotData.end).toLocaleString(undefined, { timeZone: 'UTC', timeZoneName: 'short' });
+    document.getElementById('clientName').value = booking ? booking.clientName : '';
+    document.getElementById('clientContact').value = booking ? booking.clientContact : '';
+    document.getElementById('slotModalLabel').innerText = booking ? 'Booking Details' : 'New Booking';
+
+    var slotModal = new bootstrap.Modal(document.getElementById('slotModal'));
+
+    document.getElementById('saveBooking').onclick = function () {
+        if (booking) {
+            updateBooking(slotData._id, document.getElementById('clientName').value, document.getElementById('clientContact').value)
+                .then(() => {
+                    slotModal.hide();
+                    alert('Booking updated successfuly!');
+                }).then
+                .catch(error => console.error('Error updating booking:', error));
+        } else {
+            createBooking(slotData._id, roomId, document.getElementById('clientName').value, document.getElementById('clientContact').value)
+                .then(() => {
+                    slotModal.hide();
+                    alert('Booking created successfuly!');
+                })
+                .catch(error => console.error('Error creating booking:', error));
+        }
+    };
+
+    document.getElementById('deleteBooking').onclick = function () {
+        if (booking) {
+            deleteBooking(slotData._id).then(() => {
+                slotModal.hide();
+                alert('Booking deleted successfuly!');
+            })
+                .catch(error => console.error('Error deleting booking:', error));
+        } else {
+            alert('There is no booking to delete!');
+            slotModal.hide();
+        }
+    }
+
+
+    slotModal.show();
+}
