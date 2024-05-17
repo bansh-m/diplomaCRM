@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         editable: false,
         selectable: true,
+        height: 'auto',
         selectMirror: true,
         dayMaxEvents: true,
         slotMinTime: startTime,
@@ -72,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         eventClick: function (arg) {
             var slotId = arg.event._def.extendedProps.slotId;
-            fetchSlotDetails(slotId)
+            fetchSlotDetails(slotId, roomId)
                 .then(data => {
                     showBookingModal(data, roomId);
                 })
@@ -83,24 +84,24 @@ document.addEventListener('DOMContentLoaded', function () {
     calendar.render();
 });
 
-function fetchSlotDetails(slotId) {
-    return fetch(`/rooms/slots/${slotId}`)
+function fetchSlotDetails(slotId, roomId) {
+    return fetch(`/booking/${roomId}/${slotId}`)
         .then(response => response.json());
 }
 
 function createBooking(slotId, roomId, clientName, clientContact) {
-    return fetch(`/rooms/slots/${slotId}/book`, {
+    return fetch(`/booking/${roomId}/${slotId}/book`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ roomId, clientName, clientContact })
+        body: JSON.stringify({ clientName, clientContact })
     })
         .then(response => response.json());
 }
 
-function updateBooking(slotId, clientName, clientContact) {
-    return fetch(`/rooms/slots/${slotId}/book`, {
+function updateBooking(roomId, slotId, clientName, clientContact) {
+    return fetch(`/booking/${roomId}/${slotId}/book`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -111,7 +112,7 @@ function updateBooking(slotId, clientName, clientContact) {
 }
 
 function deleteBooking(slotId) {
-    return fetch(`/rooms/slots/${slotId}/book`, {
+    return fetch(`/booking/${roomId}/${slotId}/book`, {
         method: 'DELETE'
     })
         .then(response => response.json());
@@ -129,7 +130,7 @@ function showBookingModal(slotData, roomId) {
 
     document.getElementById('saveBooking').onclick = function () {
         if (booking) {
-            updateBooking(slotData._id, document.getElementById('clientName').value, document.getElementById('clientContact').value)
+            updateBooking(slotData._id, roomId, document.getElementById('clientName').value, document.getElementById('clientContact').value)
                 .then(() => {
                     slotModal.hide();
                     alert('Booking updated successfuly!');

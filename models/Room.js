@@ -7,6 +7,7 @@ const roomSchema = new mongoose.Schema({
     hasActors: { type: Boolean, default: false },
     sessionDuration: { type: Number, required: true },
     breakDuration: { type: Number, required: true },
+    description: { type: String, required: false },
     thumbnail: { type: String, default: '/img/thumbnail.png' },
     playerLimits: {
         min: { type: Number, required: true },
@@ -15,7 +16,11 @@ const roomSchema = new mongoose.Schema({
     actors: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Actor'
-    }]
+    }],
+    schedule: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref: 'Schedule'
+    }
 });
 
 module.exports = mongoose.model('Room', roomSchema);

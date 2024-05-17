@@ -4,11 +4,12 @@ const Schedule = require('../models/Schedule');
 
 exports.createRoom = async (req, res) => {
     try {
-        const { name, address, minPlayers, maxPlayers, thumbnail, actors, workingHoursStart, workingHoursEnd, sessionDuration, breakDuration} = req.body;
+        const { name, address, description, minPlayers, maxPlayers, thumbnail, actors, workingHoursStart, workingHoursEnd, sessionDuration, breakDuration} = req.body;
         
         const room = new Room({
             name: name,
             address: address,
+            description: description,
             hasActors: actors && actors.length > 0,
             sessionDuration: sessionDuration,
             breakDuration: breakDuration,
@@ -17,9 +18,9 @@ exports.createRoom = async (req, res) => {
                 max: maxPlayers
             },
             actors: actors || [],
-            thumbnail: thumbnail
+            thumbnail: thumbnail,
+            schedule: null
         });
-        await room.save();
         
         const [startHours, startMinutes] = workingHoursStart.split(':').map(Number);
         const [endHours, endMinutes] = workingHoursEnd.split(':').map(Number);
@@ -52,6 +53,8 @@ exports.createRoom = async (req, res) => {
             completeSchedule: timeSlots
         });
 
+        room.schedule = schedule._id;
+        await room.save();
         await schedule.save();
         res.redirect('/');
 

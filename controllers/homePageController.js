@@ -1,7 +1,7 @@
 const Actor = require('../models/Actor');
 const Room = require('../models/Room');
 
-exports.showContent = async (req, res) => {
+module.exports = async (req, res) => {
     try {
         const [rooms, actors] = await Promise.all([
             Room.find({}),

@@ -4,9 +4,9 @@ const Schedule = require('../models/Schedule');
 
 exports.getSlotDetails = async (req, res) => {
     try {
-        const { slotId } = req.params;
+        const { slotId, roomId} = req.params;
     
-        const schedule = await Schedule.findOne({ 'completeSchedule.slots._id': slotId }).populate('completeSchedule.slots.extendedProps.booking');
+        const schedule = await Schedule.findOne({ 'room': roomId }).populate('completeSchedule.slots.extendedProps.booking');
         if (!schedule) {
             console.error(`No schedule found for slot ID: ${slotId}`);
             return res.status(404).json({ message: 'Slot not found' });
@@ -20,7 +20,6 @@ exports.getSlotDetails = async (req, res) => {
             console.error(`Slot not found within schedule for slot ID: ${slotId}`);
             return res.status(404).json({ message: 'Slot not found' });
         }
-
         res.json(slot);
 
     } catch (error) {
@@ -30,11 +29,10 @@ exports.getSlotDetails = async (req, res) => {
 };
 
 exports.createBooking = async (req, res) => {
-    const { slotId } = req.params;
-    const { roomId, clientName, clientContact } = req.body;
-
+    const { slotId, roomId } = req.params;
+    const { clientName, clientContact } = req.body;
     try {
-        const schedule = await Schedule.findOne({ 'completeSchedule.slots._id': slotId });
+        const schedule = await Schedule.findOne({ 'room': roomId });
         const slot = schedule.completeSchedule.find(day => 
             day.slots.some(slot => slot._id.equals(slotId))
         ).slots.id(slotId);
@@ -60,11 +58,11 @@ exports.createBooking = async (req, res) => {
 };
 
 exports.updateBooking = async (req, res) => {
-    const { slotId } = req.params;
+    const { slotId, roomId} = req.params;
     const { clientName, clientContact } = req.body;
 
     try {
-        const schedule = await Schedule.findOne({ 'completeSchedule.slots._id': slotId });
+        const schedule = await Schedule.findOne({ 'room': roomId });
         const slot = schedule.completeSchedule.find(day => 
             day.slots.some(slot => slot._id.equals(slotId))
         ).slots.id(slotId);
@@ -87,10 +85,10 @@ exports.updateBooking = async (req, res) => {
 };
 
 exports.deleteBooking = async (req, res) => {
-    const { slotId } = req.params;
+    const { slotId, roomId} = req.params;
 
     try {
-        const schedule = await Schedule.findOne({ 'completeSchedule.slots._id': slotId });
+        const schedule = await Schedule.findOne({ 'room': roomId });
         const slot = schedule.completeSchedule.find(day => 
             day.slots.some(slot => slot._id.equals(slotId))
         ).slots.id(slotId);
@@ -113,3 +111,22 @@ exports.deleteBooking = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+exports.getSchedule = async (req, res) => {
+    try {
+        const { roomId } = req.params;
+    
+        const schedule = await Schedule.findOne({ 'room': roomId });
+        if (!schedule) {
+            console.error(`No schedule found for room ${roomId}`);
+            return res.status(404).json({ message: 'Schedule not found' });
+        }
+
+        res.json(schedule);
+
+    } catch (error) {
+        console.error('Error fetching schedule details:', error);
+        res.status(500).json({ message: 'Error fetching schedule details', error });
+    }
+};
+

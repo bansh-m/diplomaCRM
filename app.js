@@ -6,8 +6,7 @@ const bodyParser = require('body-parser');
 const roomRoutes = require('./routes/roomRoutes');
 const actorRoutes = require('./routes/actorRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
-const indexRoutes = require('./routes/indexRoutes');
-const apiRoutes = require('./routes/apiRoutes');
+const homePage = require('./controllers/homePageController');
 
 const app = express();
 app.set('views', path.join(__dirname, 'views'));
@@ -18,11 +17,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 mongoose.connect("mongodb://127.0.0.1:27017/crmDB");
 
-app.use('/', indexRoutes);
+app.get('/', homePage);
 app.use('/rooms', roomRoutes);
 app.use('/actors', actorRoutes);
-app.use('/bookings', bookingRoutes);
-app.use('/api', apiRoutes);
+app.use('/booking', bookingRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
