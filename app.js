@@ -3,10 +3,13 @@ const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
 
+const authMiddleware = require('./middleware/authMiddleware');
 const roomRoutes = require('./routes/roomRoutes');
 const actorRoutes = require('./routes/actorRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
+const apiRoutes = require('./api/apiRoutes');
 const homePage = require('./controllers/homePageController');
+
 
 const app = express();
 app.set('views', path.join(__dirname, 'views'));
@@ -21,6 +24,7 @@ app.get('/', homePage);
 app.use('/rooms', roomRoutes);
 app.use('/actors', actorRoutes);
 app.use('/booking', bookingRoutes);
+app.use('/api', authMiddleware, apiRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

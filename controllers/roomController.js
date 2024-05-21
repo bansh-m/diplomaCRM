@@ -1,5 +1,4 @@
 const Room = require('../models/Room');
-const Booking = require('../models/Booking');
 const Schedule = require('../models/Schedule');
 
 exports.createRoom = async (req, res) => {

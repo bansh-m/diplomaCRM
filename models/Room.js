@@ -20,7 +20,11 @@ const roomSchema = new mongoose.Schema({
     schedule: {
         type:mongoose.Schema.Types.ObjectId,
         ref: 'Schedule'
-    }
+    },
+    reviews: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Review'
+    }]
 });
 
 module.exports = mongoose.model('Room', roomSchema);
