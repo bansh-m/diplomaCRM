@@ -5,6 +5,8 @@ const roomSchema = new mongoose.Schema({
     name: { type: String, required: true },
     address: { type: String, required: true },
     hasActors: { type: Boolean, default: false },
+    genre: {type: String, default: true},
+    price: {type: String, default: true},
     sessionDuration: { type: Number, required: true },
     breakDuration: { type: Number, required: true },
     description: { type: String, required: false },

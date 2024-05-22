@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        editable: false,
+        editable: true,
         selectable: true,
         height: 'auto',
         selectMirror: true,
