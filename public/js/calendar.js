@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var calendarEl = document.getElementById('calendar');
-    var scheduleData = calendarEl.getAttribute('data-schedule');
+    let calendarEl = document.getElementById('calendar');
+    let scheduleData = calendarEl.getAttribute('data-schedule');
 
     if (!scheduleData) {
         console.error('No schedule data found on the calendar element.');
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     try {
-        var schedule = JSON.parse(scheduleData);
+        let schedule = JSON.parse(scheduleData);
         var completeSchedule = schedule.completeSchedule.flatMap(daySlot =>
             daySlot.slots.map(slot => ({
                 title: slot.extendedProps.status === 'booked' ? 'Booked' : 'Available',
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+    let calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek',
         headerToolbar: {
             left: 'prev,next today',
@@ -43,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function () {
         dayMaxEvents: true,
         slotMinTime: startTime,
         slotMaxTime: (parseInt(endTime.split(':')[0]) + 1) + ':00:00',
-        height: 'auto',
         slotLabelFormat: {
             hour: '2-digit',
             minute: '2-digit',
@@ -58,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function () {
         events: completeSchedule,
 
         select: function (arg) {
-            // Функція для обробки створення нових подій
             var title = prompt('Event Title:');
             if (title) {
                 calendar.addEvent({
@@ -72,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         eventClick: function (arg) {
-            var slotId = arg.event._def.extendedProps.slotId;
+            let slotId = arg.event._def.extendedProps.slotId;
             fetchSlotDetails(slotId, roomId)
                 .then(data => {
                     showBookingModal(data, roomId);
@@ -119,14 +117,14 @@ function deleteBooking(slotId, roomId) {
 }
 
 function showBookingModal(slotData, roomId) {
-    var booking = slotData.extendedProps.booking;
+    let booking = slotData.extendedProps.booking;
     document.getElementById('startTime').innerText = new Date(slotData.start).toLocaleString(undefined, { timeZone: 'UTC', timeZoneName: 'short' });
     document.getElementById('endTime').innerText = new Date(slotData.end).toLocaleString(undefined, { timeZone: 'UTC', timeZoneName: 'short' });
     document.getElementById('clientName').value = booking ? booking.clientName : '';
     document.getElementById('clientContact').value = booking ? booking.clientContact : '';
     document.getElementById('slotModalLabel').innerText = booking ? 'Booking Details' : 'New Booking';
 
-    var slotModal = new bootstrap.Modal(document.getElementById('slotModal'));
+    let slotModal = new bootstrap.Modal(document.getElementById('slotModal'));
 
     document.getElementById('saveBooking').onclick = function () {
         if (booking) {
@@ -158,7 +156,5 @@ function showBookingModal(slotData, roomId) {
             slotModal.hide();
         }
     }
-
-
     slotModal.show();
 }

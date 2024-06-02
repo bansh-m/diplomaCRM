@@ -1,4 +1,4 @@
-var room = JSON.parse(actions.getAttribute('room'));
+let room = JSON.parse(actions.getAttribute('room'));
 
 document.getElementById('editBtn').addEventListener('click', function() {
     document.getElementById('roomName').disabled = false;

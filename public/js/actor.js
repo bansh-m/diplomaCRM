@@ -1,4 +1,4 @@
-var actor = JSON.parse(actions.getAttribute('actor'));
+let actor = JSON.parse(actions.getAttribute('actor'));
 
 document.getElementById('editBtn').addEventListener('click', function() {
     document.getElementById('actorName').disabled = false;
