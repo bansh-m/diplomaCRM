@@ -1,4 +1,18 @@
 const Actor = require('../models/Actor');
+const Room = require('../models/Room');
+
+exports.getActor = async (req, res) => {
+    try {
+        const actor = await Actor.findById(req.params.id).populate('rooms');
+        if (!actor) {
+            return res.status(404).send('Actor not found');
+        }
+        res.render('actor', { actor });
+    } catch (error) {
+        console.error('Error fetching actor details:', error);
+        res.status(500).send('Error fetching actor details');
+    }
+}
 
 exports.createActor = async (req, res) => {
     const { name, photo, age, contactNumber, address, rooms} = req.body;
@@ -11,8 +25,16 @@ exports.createActor = async (req, res) => {
             address: address,
             rooms: rooms || []
         });
+
+        if (actor.rooms && actor.rooms.length > 0) {
+            for (const roomId of actor.rooms) {
+                await Room.findByIdAndUpdate(roomId, { $push: { actors: actor._id } });
+            }
+        }
+
         await actor.save();
-        res.redirect('/')
+        res.redirect('/home')
+
     } catch (error) {
         console.error("Error creating actor:", error);
         res.status(400).json({ message: "Failed to create new actor profile", error });

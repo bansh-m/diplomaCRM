@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('layouts/header'); -%>
+
+    <link href="/css/signin.css" rel="stylesheet">
+
+    <body class="text-center">
+        <main class="form-signin w-100 m-auto">
+            <form action="/auth" method="post">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="floatingInput" name="username" placeholder="Username" required>
+                    <label for="floatingInput">Username</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password" required>
+                    <label for="floatingPassword">Password</label>
+                </div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+            </form>
+        </main>
+        <%- include('layouts/scripts'); -%>
+    </body>
+
+</html>

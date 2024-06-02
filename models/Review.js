@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 
 const reviewSchema = new mongoose.Schema({
-    room: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Room',
-        required: true
-    },
+    roomId: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
     clientName: { type: String, required: true },
     clientEmail: { type: String, required: true },
     difficulty: { type: Number, min: 1, max: 10, required: true },

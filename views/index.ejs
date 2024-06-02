@@ -4,15 +4,11 @@
 
 <body>
     <div class="d-flex">
-        <!-- Sidebar -->
         <%- include('layouts/sidebar'); -%>
-
-        <!-- Main Content Area -->
         <main class="flex-grow-1">
             <div class="rooms-content p-3">
                 <h1>Rooms Management</h1>
                 <div class="d-flex flex-wrap justify-content-start mt-4">
-                    <!-- Rooms -->
                     <% rooms.forEach(function(room) { %>
                         <div class="p-2">
                             <div class="card">
@@ -33,16 +29,15 @@
             </div>
             
             <div class="actors-content p-3">
-                <h1>Actor Management</h1>
+                <h1>Actors Management</h1>
                 <div class="d-flex flex-wrap justify-content-start mt-4">
-                    <!-- Actors -->
                     <% actors.forEach(function(actor) { %>
                         <div class="p-2">
                             <div class="card">
                                 <img src="<%= actor.photo %>" class="card-img-top" alt="<%= actor.name %>">
                                 <div class="card-body">
                                     <h5 class="card-title"><%= actor.name %></h5>
-                                    <a href="#" class="btn btn-primary">View Profile</a>
+                                    <a href="/actors/<%= actor._id %>" class="btn btn-primary">View Profile</a>
                                 </div>
                             </div>
                         </div>

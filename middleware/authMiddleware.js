@@ -1,14 +1,13 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config()
 
 const authMiddleware = (req, res, next) => {
-    const token = req.header('Authorization');
-
+    const token = req.cookies.token;
     if (!token) {
         return res.status(401).json({ message: 'Access denied. No token provided.' });
     }
-
     try {
-        const decoded = jwt.verify(token, 'your_jwt_private_key');
+        const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
         req.user = decoded;
         next();
     } catch (error) {

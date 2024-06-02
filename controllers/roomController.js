@@ -31,11 +31,11 @@ exports.createRoom = async (req, res) => {
             breakDuration
         );
 
-        const timeSlots = [];
+        const days = [];
         for (let i = 0; i < 14; i++) {
             const day = new Date();
             day.setDate(day.getDate() + i);
-            timeSlots.push({
+            days.push({
                 date: day,
                 slots: dayTemplate.map(slot => ({
                     title: slot.title,
@@ -47,15 +47,15 @@ exports.createRoom = async (req, res) => {
         }
 
         const schedule = new Schedule({
-            room: room._id,
+            roomId: room._id,
             dayTemplate: { startTime: workingHoursStart, endTime: workingHoursEnd, sessionDuration, breakDuration, slots: dayTemplate},
-            completeSchedule: timeSlots
+            completeSchedule: days
         });
 
         room.schedule = schedule._id;
         await room.save();
         await schedule.save();
-        res.redirect('/');
+        res.redirect('/home');
 
     } catch (error) {
         console.error("Error creating room:", error);
@@ -71,7 +71,7 @@ exports.getRoom = async(req, res) => {
             return res.status(404).send('Room not found');
         }
 
-        const schedule = await Schedule.findOne({ room: room._id });
+        const schedule = await Schedule.findOne({ roomId: room._id });
         
         if (!schedule) {
             return res.status(404).send('Schedule not found');
@@ -138,3 +138,4 @@ function createDayTemplate(startTime, endTime, sessionDuration, breakDuration) {
 
     return timeSlots;
 }
+

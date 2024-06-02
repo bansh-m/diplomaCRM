@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 
 const scheduleSchema = new mongoose.Schema({
-    room: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Room',
-        required: true
-    },
+    roomId: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
     dayTemplate: {
         startTime: String,
         endTime: String,

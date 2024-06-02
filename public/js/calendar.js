@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }))
         );
-        var roomId = schedule.room;
+        var roomId = schedule.roomId;
         var startTime = schedule.dayTemplate.startTime;
         var endTime = schedule.dayTemplate.endTime;
     } catch (e) {
@@ -100,7 +100,7 @@ function createBooking(slotId, roomId, clientName, clientContact) {
         .then(response => response.json());
 }
 
-function updateBooking(roomId, slotId, clientName, clientContact) {
+function updateBooking(slotId, roomId, clientName, clientContact) {
     return fetch(`/booking/${roomId}/${slotId}/book`, {
         method: 'PUT',
         headers: {
@@ -111,7 +111,7 @@ function updateBooking(roomId, slotId, clientName, clientContact) {
         .then(response => response.json());
 }
 
-function deleteBooking(slotId) {
+function deleteBooking(slotId, roomId) {
     return fetch(`/booking/${roomId}/${slotId}/book`, {
         method: 'DELETE'
     })
@@ -133,14 +133,14 @@ function showBookingModal(slotData, roomId) {
             updateBooking(slotData._id, roomId, document.getElementById('clientName').value, document.getElementById('clientContact').value)
                 .then(() => {
                     slotModal.hide();
-                    alert('Booking updated successfuly!');
-                }).then
+                    window.location.reload();
+                })
                 .catch(error => console.error('Error updating booking:', error));
         } else {
             createBooking(slotData._id, roomId, document.getElementById('clientName').value, document.getElementById('clientContact').value)
                 .then(() => {
                     slotModal.hide();
-                    alert('Booking created successfuly!');
+                    window.location.reload();
                 })
                 .catch(error => console.error('Error creating booking:', error));
         }
@@ -148,9 +148,9 @@ function showBookingModal(slotData, roomId) {
 
     document.getElementById('deleteBooking').onclick = function () {
         if (booking) {
-            deleteBooking(slotData._id).then(() => {
+            deleteBooking(slotData._id, roomId).then(() => {
                 slotModal.hide();
-                alert('Booking deleted successfuly!');
+                window.location.reload();
             })
                 .catch(error => console.error('Error deleting booking:', error));
         } else {

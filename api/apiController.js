@@ -2,15 +2,15 @@ const Room = require('../models/Room');
 
 exports.getRoom = async (req, res) => {
     try {
-        const room = await Room.findById(req.params.id)
+        const room = await Room.findById(req.params.roomId)
             .populate('actors')
             .populate('schedule')
-            .populate('reviews')
         if (!room) {
             return res.status(404).json({ message: 'Room not found' });
         }
 
         res.json(room);
+        
     } catch (error) {
         console.error('Error fetching slot details:', error);
         res.status(500).json({ message: 'Error fetching slot details', error });

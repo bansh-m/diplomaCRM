@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('layouts/header'); -%>
+<body>
+    <div class="d-flex">
+        <%- include('layouts/sidebar'); -%>
+        <main class="flex-grow-1">
+            <div class="container mt-4">
+                <div class="actor-body">
+                    <form id="actorForm">
+                        <div class="mb-3">
+                            <label for="actorName" class="form-label">Name:</label>
+                            <input type="text" id="actorName" class="form-control" value="<%= actor.name %>" disabled>
+                        </div>
+                        <!-- <div class="mb-3">
+                            <label for="actorAddress" class="form-label">Address:</label>
+                            <input type="text" id="actorAddress" class="form-control" value="<%= actor.address %>" disabled>
+                        </div> -->
+                        <div class="mb-3">
+                            <label for="actorAge" class="form-label">Age:</label>
+                            <input type="number" id="actorAge" class="form-control" value="<%= actor.age %>" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="actorContact" class="form-label">Contact Number:</label>
+                            <input type="text" id="actorContact" class="form-control" value="<%= actor.contactNumber %>" disabled>
+                        </div>
+                    </form>
+                    <h6 class="mt-4">Rooms associated with this actor:</h6>
+                    <ul class="list-group">
+                        <% if (actor.rooms && actor.rooms.length > 0) { %>
+                            <% actor.rooms.forEach(function(room) { %>
+                                <li class="list-group-item"><%= room.name %></li>
+                            <% }); %>
+                        <% } else { %>
+                            <li class="list-group-item">No rooms assigned</li>
+                        <% } %>
+                    </ul>
+                    <div id ="actions" class="d-flex justify-content-start mb-4 mt-3" actor="<%= JSON.stringify(actor) %>">
+                        <button id="editBtn" class="btn btn-primary me-2">Edit</button>
+                        <button id="saveBtn" class="btn btn-success d-none me-2">Save</button>
+                        <button id="deleteBtn" class="btn btn-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </main> 
+        <script src="/js/actor.js"></script>
+        <%- include('layouts/scripts'); -%>
+    </body>
+</html>

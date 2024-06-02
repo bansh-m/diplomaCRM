@@ -1,13 +1,10 @@
-<!-- Actor Modal -->
 <div class="modal fade" id="actorModal" tabindex="-1" aria-labelledby="actorModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <!-- Modal Header -->
             <div class="modal-header">
                 <h5 class="modal-title" id="actorModalLabel">Add New Actor</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <!-- Modal Body -->
             <div class="modal-body">
                 <form action="/actors/create" method="post">
                     <div class="form-group mb-3">
@@ -26,19 +23,21 @@
                         <label for="actorContactNumber">Contact Number:</label>
                         <input type="text" class="form-control" id="actorContactNumber" name="contactNumber">
                     </div>
-                    <div class="form-group mb-3">
+                    <!-- <div class="form-group mb-3">
                         <label for="actorAddress">Address:</label>
                         <input type="text" class="form-control" id="actorAddress" name="address" required>
-                    </div>
+                    </div> -->
                     <div class="form-group mb-3">
-                        <label for="actorRooms">Rooms:</label>
-                        <select multiple class="form-control" id="actorRooms" name="rooms">
-                            <% rooms.forEach(function(room) { %>
-                                <option value="<%= room._id %>"><%= room.name %></option>
-                            <% }); %>
-                        </select>
+                        <label for="rooms">Rooms:</label>
+                        <% rooms.forEach(function(room) { %>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="<%= room._id %>" id="room_<%= room._id %>" name="rooms">
+                                <label class="form-check-label" for="room_<%= room._id %>">
+                                    <%= room.name %>
+                                </label>
+                            </div>
+                        <% }); %>
                     </div>
-                    <!-- Modal Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Add Actor</button>

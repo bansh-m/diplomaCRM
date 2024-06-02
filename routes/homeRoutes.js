@@ -1,7 +1,9 @@
+const express = require('express');
+const router = express.Router();
 const Actor = require('../models/Actor');
 const Room = require('../models/Room');
 
-module.exports = async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const [rooms, actors] = await Promise.all([
             Room.find({}),
@@ -11,4 +13,6 @@ module.exports = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Error retrieving rooms", error });
     }
-};
+});
+
+module.exports = router;
