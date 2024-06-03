@@ -20,6 +20,7 @@ const predictionRoutes = require('./routes/predictionRoutes');
 
 
 const app = express();
+app.disable("x-powered-by");
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(bodyParser.json())

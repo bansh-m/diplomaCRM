@@ -38,7 +38,7 @@
                         <label for="actors">Select Actors:</label>
                         <% actors.forEach(function(actor) { %>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="<%= actor._id %>" id="actor_<%= actor._id %>" name="rooms">
+                                <input class="form-check-input" type="checkbox" value="<%= actor._id %>" id="actor_<%= actor._id %>" name="actors">
                                 <label class="form-check-label" for="actor_<%= actor._id %>">
                                     <%= actor.name %>
                                 </label>

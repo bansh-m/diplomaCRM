@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
         events: completeSchedule,
 
         select: function (arg) {
-            var title = prompt('Event Title:');
+            let title = prompt('Event Title:');
             if (title) {
                 calendar.addEvent({
                     title: title,
