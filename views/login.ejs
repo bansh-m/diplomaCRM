@@ -6,7 +6,12 @@
 
     <body class="text-center">
         <main class="form-signin w-100 m-auto">
-            <form action="/auth" method="post">
+            <% if (typeof error !== 'undefined') { %>
+                <div class="alert alert-danger" role="alert">
+                    <%= error %>
+                </div>
+            <% } %>
+            <form action="/auth" method="POST">
                 <div class="form-floating">
                     <input type="text" class="form-control" id="floatingInput" name="username" placeholder="Username" required>
                     <label for="floatingInput">Username</label>

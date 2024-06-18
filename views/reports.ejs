@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('layouts/header'); -%>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<style>
+    body {
+        width: 100%;
+        border-collapse: collapse;
+        user-select: none;
+    }
+    .sort-icons {
+        display: inline-block;
+        vertical-align: middle;
+        margin-left: 5px;
+        position: relative;
+        user-select: none;
+    }
+    .sort-icons i {
+        display: block;
+        cursor: pointer;
+        margin: 0;
+        line-height: 1;
+        font-size: 1em; /* Зменшення розміру іконок */
+    }
+    .sort-icons i:active, .sort-icons i:focus {
+        outline: none;
+    }
+    .sort-icons i {
+        pointer-events: none;
+    }
+    .sort-icons i.sort-up,
+    .sort-icons i.sort-down {
+        pointer-events: all;
+        position: relative;
+        z-index: 1;
+    }
+    .sort-icons .sort-up {
+        margin-bottom: -10px; /* Зменшення відстані між іконками */
+    }
+    .modal-body {
+        overflow-y: auto;
+    }
+</style>
+<body>
+    <div class="d-flex">
+        <%- include('layouts/sidebar'); -%>
+        <main class="container mt-4 flex-grow-1">
+            <table class="table table-striped" id="reportsTable">
+                <thead>
+                    <tr>
+                        <th>
+                            Room Name
+                            <span class="sort-icons">
+                                <i class="fas fa-sort-up sort-up" onclick="sortTable(0, true)"></i>
+                                <i class="fas fa-sort-down sort-down" onclick="sortTable(0, false)"></i>
+                            </span>
+                        </th>
+                        <th>
+                            Number of Actors
+                            <span class="sort-icons">
+                                <i class="fas fa-sort-up sort-up" onclick="sortTable(1, true)"></i>
+                                <i class="fas fa-sort-down sort-down" onclick="sortTable(1, false)"></i>
+                            </span>
+                        </th>
+                        <th>
+                            Number of Reviews
+                            <span class="sort-icons">
+                                <i class="fas fa-sort-up sort-up" onclick="sortTable(2, true)"></i>
+                                <i class="fas fa-sort-down sort-down" onclick="sortTable(2, false)"></i>
+                            </span>
+                        </th>
+                        <th>
+                            Total Bookings
+                            <span class="sort-icons">
+                                <i class="fas fa-sort-up sort-up" onclick="sortTable(3, true)"></i>
+                                <i class="fas fa-sort-down sort-down" onclick="sortTable(3, false)"></i>
+                            </span>
+                        </th>
+                        <th>
+                            Current Bookings
+                            <span class="sort-icons">
+                                <i class="fas fa-sort-up sort-up" onclick="sortTable(4, true)"></i>
+                                <i class="fas fa-sort-down sort-down" onclick="sortTable(4, false)"></i>
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="reportsTableBody">
+                    <% reports.forEach(report => { %>
+                        <tr>
+                            <td><%= report.roomName %></td>
+                            <td><%= report.actorsCount %></td>
+                            <td>
+                                <%= report.reviewsCount %>
+                                <button class="btn btn-primary btn-sm" onclick="showReviews('<%= report.roomId %>')">Show Reviews</button>
+                            </td>
+                            <td><%= report.totalBookingsCount %></td>
+                            <td><%= report.currentBookingsCount %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </main>
+    </div>
+    
+    <script src="/js/reports.js"></script>
+    <%- include('layouts/reviewsModalForm'); -%>
+    <%- include('layouts/scripts'); -%>
+</body>
+</html>

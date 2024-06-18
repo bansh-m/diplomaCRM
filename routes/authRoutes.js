@@ -14,15 +14,24 @@ router.post('/', async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
     if (!user) {
-        return res.status(401).send('Invalid credentials');
+        return res.render('login', { error: 'Invalid credentials' });
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-        return res.status(401).send('Invalid credentials');
+        return res.render('login', { error: 'Invalid credentials' });
     }
-    const token = jwt.sign({ id: user._id, username: user.username }, secretKey, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id, username: user.username }, secretKey, { expiresIn: '6h' });
     res.cookie('token', token, { httpOnly: true });
     res.redirect('/home');
 });
+
+router.get('/generate-token', (req, res) => {
+    const payload = {
+      user_id: "12345"
+    };
+  
+    const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
+    res.json({ token });
+  });
 
 module.exports = router;
